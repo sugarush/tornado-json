@@ -8,14 +8,14 @@ from tornado.escape import to_basestring
 
 UUID_REGEX = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
 
-def encode(data):
-    return json.dumps(data, separators=(',',':')).replace("</", "<\\/")
-
-def decode(data):
-    return json.loads(to_basestring(data))
-
 
 class JSONHandler(RequestHandler):
+
+    def encode(self, data):
+        return json.dumps(data, separators=(',',':')).replace("</", "<\\/")
+
+    def decode(self, data):
+        return json.loads(to_basestring(data))
 
     def initialize(self, provider=None, version=None, origin=None):
         self.provider = provider or self.settings.get('provider', 'unknown')
