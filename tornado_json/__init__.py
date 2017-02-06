@@ -42,13 +42,13 @@ class JSONHandler(RequestHandler):
 
     def send_json(self, status, data):
         self.set_status(status)
-        self.write(encode(data))
+        self.write(self.encode(data))
         self.finish()
 
     # called by send_error
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
-        self.write(encode({ 'error': kargs.get('reason') }))
+        self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
     def format(self, item):
