@@ -52,7 +52,7 @@ class JSONHandler(RequestHandler):
         if 'exc_info' in kargs:
             stack_trace = traceback.format_exception(*kargs['exc_info'])
             stack_trace = str.join('', stack_trace).rstrip('\n')
-            access_log.error('%s %s' % (self.uuid, stack_trace))
+            access_log.error('%s\n%s' % (self.uuid, stack_trace))
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
