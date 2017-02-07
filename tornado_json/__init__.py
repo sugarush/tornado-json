@@ -1,9 +1,10 @@
-import json, re
+import json, re, traceback
 
 from uuid import uuid4
 
 from tornado.web import RequestHandler
 from tornado.escape import to_basestring
+from tornado.log import access_log
 
 
 UUID_REGEX = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
@@ -48,6 +49,8 @@ class JSONHandler(RequestHandler):
     # called by send_error
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
+        if 'exc_info' in kargs:
+            access_log.error(traceback.format_exception(*kargs['exc_info']))
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
