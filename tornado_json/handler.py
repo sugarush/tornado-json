@@ -51,7 +51,8 @@ class JSONHandler(RequestHandler):
         # set_status has already been called in send_error
         if 'exc_info' in kargs:
             stack_trace = traceback.format_exception(*kargs['exc_info'])
-            access_log.error(''.join(stack_trace))
+            stack_trace = str.join('', stack_trace).rstrip('\n')
+            access_log.error('%s %s' % (self.uuid, stack_trace))
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
