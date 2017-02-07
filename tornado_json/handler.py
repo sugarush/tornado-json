@@ -52,7 +52,13 @@ class JSONHandler(RequestHandler):
         if 'exc_info' in kargs:
             stack_trace = traceback.format_exception(*kargs['exc_info'])
             stack_trace = str.join('', stack_trace).rstrip('\n')
-            access_log.error('%s\n%s' % (self.uuid, stack_trace))
+            stack_trace = ('%s\n%s' % (self.uuid, stack_trace))
+            if status >= 500:
+                access_log.error(stack_trace)
+            elif status >= 400:
+                access_log.warning(stack_trace)
+            elif status >= 200:
+                access_log.info(stack_trace)
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
