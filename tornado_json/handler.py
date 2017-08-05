@@ -7,22 +7,23 @@ from tornado.escape import to_basestring
 from tornado.log import access_log
 
 
-UUID_REGEX = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
-
-
 class JSONHandler(RequestHandler):
 
-    def encode(self, data):
+    UUID_REGEX = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+
+    @classmethod
+    def encode(cls, data):
         return json.dumps(data, separators=(',',':')).replace("</", "<\\/")
 
-    def decode(self, data):
+    @classmethod
+    def decode(cls, data):
         return json.loads(to_basestring(data))
 
     def initialize(self, provider=None, version=None, origin=None):
         self.provider = provider or self.settings.get('provider', 'unknown')
         self.version = version or self.settings.get('version', 'unknown')
         self.origin = origin or self.settings.get('origin', '*')
-        self.valid_uuid = re.compile(UUID_REGEX)
+        self.valid_uuid = re.compile(self.UUID_REGEX)
         self.uuid = None
 
     def prepare(self):
