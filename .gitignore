@@ -1,2 +1,3 @@
 venv
+.pythonrc
 *.pyc
