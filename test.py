@@ -43,7 +43,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         response = self.fetch('/provider_default',
             method='GET'
         )
-        provider = response.headers.get('X-Provider')
+        provider = response.headers.get('Provider')
         self.assertEqual(provider, JSONHandler.default_provider)
 
         self._app.settings.update({'provider': 'application'})
@@ -51,13 +51,13 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         response = self.fetch('/provider_default',
             method='GET'
         )
-        provider = response.headers.get('X-Provider')
+        provider = response.headers.get('Provider')
         self.assertEqual(provider, 'application')
 
         response = self.fetch('/provider_handler',
             method='GET'
         )
-        provider = response.headers.get('X-Provider')
+        provider = response.headers.get('Provider')
         self.assertEqual(provider, 'handler')
 
     @skip('untested')

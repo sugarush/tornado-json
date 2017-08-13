@@ -37,15 +37,15 @@ class JSONHandler(RequestHandler):
         self.uuid = None
 
     def prepare(self):
-        uuid = self.request.headers.get('Request-Id')
+        uuid = self.request.headers.get('Request')
         if not uuid or not self.valid_uuid.match(uuid):
             uuid = str(uuid4())
-            self.request.headers['Request-Id'] = uuid
-        self.set_header('X-Provider', self.provider)
-        self.set_header('X-Version', self.version)
+            self.request.headers['Request'] = uuid
         self.set_header('Access-Control-Allow-Origin', self.origin)
         self.set_header('Content-Type', self.content_type())
-        self.set_header('Request-Id', uuid)
+        self.set_header('Provider', self.provider)
+        self.set_header('Version', self.version)
+        self.set_header('Request', uuid)
         self.uuid = uuid
 
     def content_type(self):
