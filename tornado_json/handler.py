@@ -11,6 +11,10 @@ class JSONHandler(RequestHandler):
 
     UUID_REGEX = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
 
+    default_provider = 'unknown'
+    default_version  = 'unknown'
+    default_origin   = '*'
+
     @classmethod
     def encode(cls, data):
         return json.dumps(data, separators=(',',':')).replace("</", "<\\/")
@@ -20,9 +24,15 @@ class JSONHandler(RequestHandler):
         return json.loads(to_basestring(data))
 
     def initialize(self, provider=None, version=None, origin=None):
-        self.provider = provider or self.settings.get('provider', 'unknown')
-        self.version = version or self.settings.get('version', 'unknown')
-        self.origin = origin or self.settings.get('origin', '*')
+        self.provider = provider or self.settings.get(
+            'provider', self.default_provider
+        )
+        self.version = version or self.settings.get(
+            'version', self.default_version
+        )
+        self.origin = origin or self.settings.get(
+            'origin', self.default_origin
+        )
         self.valid_uuid = re.compile(self.UUID_REGEX)
         self.uuid = None
 
@@ -31,13 +41,15 @@ class JSONHandler(RequestHandler):
         if not uuid or not self.valid_uuid.match(uuid):
             uuid = str(uuid4())
             self.request.headers['Request-Id'] = uuid
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Content-Type', self.get_content_type())
+        self.set_header('X-Provider', self.provider)
+        self.set_header('X-Version', self.version)
+        self.set_header('Access-Control-Allow-Origin', self.origin)
+        self.set_header('Content-Type', self.content_type())
         self.set_header('Request-Id', uuid)
         self.uuid = uuid
 
-    def get_content_type(self):
-        return 'application/api.{provider}+json; version={version}'.format(
+    def content_type(self):
+        return 'application/{provider}.api+json; version={version}'.format(
             provider=self.provider,
             version=self.version
         )
@@ -47,7 +59,7 @@ class JSONHandler(RequestHandler):
         self.write(self.encode(data))
         self.finish()
 
-    # called by send_error
+    # called by `send_error` in RequestHandler
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
         if 'exc_info' in kargs:
@@ -63,6 +75,7 @@ class JSONHandler(RequestHandler):
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
 
+    # XXX: the following two functions correspond to MongoDB only
     def format(self, item):
         item['_id'] = str(item['_id'])
         return item

@@ -9,13 +9,10 @@ from tornado_json import JSONHandler
 class TestHandler(JSONHandler):
 
     def get(self):
-        pass
-
-
-def get_app(**kargs):
-    return web.Application([
-        (r'/json', TestHandler)
-    ], **kargs)
+        self.write(self.encode({
+            'success': 'it worked'
+        }))
+        self.finish()
 
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):
@@ -27,7 +24,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
 
     # must be implemented to run tests
     def get_app(self):
-        pass
+        return web.Application()
 
     def test_encode(self):
         data = JSONHandler.encode(self.json_to_encode)
@@ -37,9 +34,31 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         data = JSONHandler.decode(self.json_to_decode)
         self.assertEqual(data, self.json_to_encode)
 
-    @skip('untested')
     def test_initialize_provider(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/provider_default', TestHandler),
+            (r'/provider_handler', TestHandler, {'provider': 'handler'}),
+        ])
+
+        response = self.fetch('/provider_default',
+            method='GET'
+        )
+        provider = response.headers.get('X-Provider')
+        self.assertEqual(provider, JSONHandler.default_provider)
+
+        self._app.settings.update({'provider': 'application'})
+
+        response = self.fetch('/provider_default',
+            method='GET'
+        )
+        provider = response.headers.get('X-Provider')
+        self.assertEqual(provider, 'application')
+
+        response = self.fetch('/provider_handler',
+            method='GET'
+        )
+        provider = response.headers.get('X-Provider')
+        self.assertEqual(provider, 'handler')
 
     @skip('untested')
     def test_initialize_version(self):
@@ -63,6 +82,10 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
 
     @skip('untested')
     def test_send_json(self):
+        pass
+
+    @skip('untested')
+    def test_write_error(self):
         pass
 
     @skip('untested')
