@@ -77,7 +77,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         pass
 
     @skip('untested')
-    def test_get_content_type(self):
+    def test_content_type(self):
         pass
 
     @skip('untested')
