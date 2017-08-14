@@ -45,6 +45,7 @@ class JSONHandler(RequestHandler):
         self.set_header('Content-Type', self.content_type())
         self.set_header('Provider', self.provider)
         self.set_header('Version', self.version)
+        self.set_header('Origin', self.origin)
         self.set_header('Request', uuid)
         self.uuid = uuid
 
