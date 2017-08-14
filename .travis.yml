@@ -16,11 +16,14 @@ after_success:
   - codecov --token "${CODECOV}" > /dev/null
 
 notifications:
+
   slack:
+
     rooms:
       - sugarush:ZmgII1nbdMZf6FEhq7PgiuAG#travis-ci
 
     template:
-      - "%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
+      - "Commit to %{repository}@%{branch} by %{author} <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) %{result}"
+      - "%{commit_message}"
+
+    on_pull_requests: false
