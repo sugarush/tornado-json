@@ -84,7 +84,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
             method='GET'
         )
         version = response.headers.get('Version')
-        self.assertEqual(version, 'handler')
+        self.assertEqual(version, 'fail')
 
     @skip('untested')
     def test_initialize_origin(self):
