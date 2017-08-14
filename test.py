@@ -26,16 +26,17 @@ class TestHandler(JSONHandler):
         try:
             raise Exception('Server error')
         except Exception, error:
-            self.send_error(500, reason=error.message)
+            data = JSONHandler.decode(self.request.body)
+            self.send_error(data['status'],
+                reason=error.message,
+                exc_info=sys.exc_info(),
+            )
 
     def delete(self):
         try:
             raise Exception('Server error')
         except Exception, error:
-            self.send_error(500,
-                reason=error.message,
-                exc_info=sys.exc_info(),
-            )
+            self.send_error(500, reason=error.message)
 
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):
@@ -214,8 +215,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         ])
 
         response = self.fetch('/write_error',
-            method='POST',
-            body='empty'
+            method='DELETE',
         )
 
         error = '{"error":"Server error"}'
@@ -226,9 +226,41 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
             (r'/write_error', TestHandler),
         ])
 
+        status = 300
+
+        data = JSONHandler.encode({
+            'status': status
+        })
+
         response = self.fetch('/write_error',
-            method='DELETE'
+            method='POST',
+            body=data
         )
 
-        error = '{"error":"Server error"}'
-        self.assertEqual(response.body, error)
+        self.assertEqual(response.code, status)
+
+        status = 400
+
+        data = JSONHandler.encode({
+            'status': status
+        })
+
+        response = self.fetch('/write_error',
+            method='POST',
+            body=data
+        )
+
+        self.assertEqual(response.code, status)
+
+        status = 500
+
+        data = JSONHandler.encode({
+            'status': status
+        })
+
+        response = self.fetch('/write_error',
+            method='POST',
+            body=data
+        )
+
+        self.assertEqual(response.code, status)
