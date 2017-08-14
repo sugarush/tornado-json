@@ -1,3 +1,5 @@
+import sys
+
 from pprint import pprint
 from unittest import skip
 
@@ -25,6 +27,15 @@ class TestHandler(JSONHandler):
             raise Exception('Server error')
         except Exception, error:
             self.send_error(500, reason=error.message)
+
+    def delete(self):
+        try:
+            raise Exception('Server error')
+        except Exception, error:
+            self.send_error(500,
+                reason=error.message,
+                exc_info=sys.exc_info(),
+            )
 
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):
@@ -210,9 +221,17 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         error = '{"error":"Server error"}'
         self.assertEqual(response.body, error)
 
-    @skip('untested')
     def test_write_error_with_stack_stack_trace(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/write_error', TestHandler),
+        ])
+
+        response = self.fetch('/write_error',
+            method='DELETE'
+        )
+
+        error = '{"error":"Server error"}'
+        self.assertEqual(response.body, error)
 
     @skip('untested')
     def test_format(self):
