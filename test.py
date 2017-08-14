@@ -86,9 +86,31 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         version = response.headers.get('Version')
         self.assertEqual(version, 'handler')
 
-    @skip('untested')
     def test_initialize_origin(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/origin_default', TestHandler),
+            (r'/origin_handler', TestHandler, {'origin': 'handler'}),
+        ])
+
+        response = self.fetch('/origin_default',
+            method='GET'
+        )
+        origin = response.headers.get('Origin')
+        self.assertEqual(origin, JSONHandler.default_origin)
+
+        self._app.settings.update({'origin': 'application'})
+
+        response = self.fetch('/origin_default',
+            method='GET'
+        )
+        origin = response.headers.get('Origin')
+        self.assertEqual(origin, 'application')
+
+        response = self.fetch('/origin_handler',
+            method='GET'
+        )
+        origin = response.headers.get('Origin')
+        self.assertEqual(origin, 'handler')
 
     @skip('untested')
     def test_prepare_uuid_from_client(self):
