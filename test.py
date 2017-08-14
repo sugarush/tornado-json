@@ -1,6 +1,8 @@
 from pprint import pprint
 from unittest import skip
 
+from uuid import uuid4
+
 from tornado import testing, web, gen
 
 from tornado_json import JSONHandler
@@ -112,17 +114,61 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         origin = response.headers.get('Origin')
         self.assertEqual(origin, 'handler')
 
-    @skip('untested')
     def test_prepare_uuid_from_client(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/uuid', TestHandler),
+        ])
 
-    @skip('untested')
+        uuid = str(uuid4())
+
+        response = self.fetch('/uuid',
+            method='GET',
+            headers={
+                'Request-Id': uuid,
+            }
+        )
+
+        self.assertEqual(response.headers['Request-Id'], uuid)
+
     def test_prepare_uuid_from_server(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/uuid', TestHandler),
+        ])
 
-    @skip('untested')
+        response = self.fetch('/uuid',
+            method='GET',
+        )
+
+        self.assertIsNotNone(response.headers['Request-Id'])
+
+    def test_prepare_uuid_invalid(self):
+        self._app.add_handlers(r'.*', [
+            (r'/uuid', TestHandler),
+        ])
+
+        uuid = 'invalid'
+
+        response = self.fetch('/uuid',
+            method='GET',
+            headers={
+                'Request-Id': uuid,
+            }
+        )
+
+        self.assertIsNotNone(response.headers['Request-Id'])
+        self.assertNotEqual(response.headers['Request-Id'], uuid)
+
     def test_content_type(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/content_type', TestHandler),
+        ])
+
+        response = self.fetch('/content_type',
+            method='GET',
+        )
+
+        content_type = 'application/unknown.api+json; version=unknown'
+        self.assertEqual(response.headers['Content-Type'], content_type)
 
     @skip('untested')
     def test_send_json(self):
