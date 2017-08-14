@@ -1,7 +1,7 @@
 codecov:
 
   notify:
-    after_n_build: 0
+    after_n_builds: 0
 
 coverage:
 
