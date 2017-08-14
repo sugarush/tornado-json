@@ -1,0 +1,6 @@
+coverage:
+
+  notify:
+    slack:
+      travis-ci:
+        url: "https://hooks.slack.com/services/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3"
