@@ -1,1 +1,1 @@
-from handler import JSONHandler
+from . handler import JSONHandler
