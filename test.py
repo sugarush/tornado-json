@@ -16,6 +16,11 @@ class TestHandler(JSONHandler):
         }))
         self.finish()
 
+    def put(self):
+        data = self.request.body
+        print data
+        self.send_json(200, data)
+
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):
 
@@ -170,9 +175,22 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         content_type = 'application/unknown.api+json; version=unknown'
         self.assertEqual(response.headers['Content-Type'], content_type)
 
-    @skip('untested')
     def test_send_json(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/send_json', TestHandler),
+        ])
+
+        data = JSONHandler.encode({
+            'send_json': 'test'
+        })
+
+
+        response = self.fetch('/send_json',
+            method='PUT',
+            body=data,
+        )
+
+        self.assertEqual(data, JSONHandler.decode(response.body))
 
     @skip('untested')
     def test_write_error(self):
