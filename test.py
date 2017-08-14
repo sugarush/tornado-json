@@ -232,11 +232,3 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
 
         error = '{"error":"Server error"}'
         self.assertEqual(response.body, error)
-
-    @skip('untested')
-    def test_format(self):
-        pass
-
-    @skip('untested')
-    def test_send_result(self):
-        pass

@@ -75,14 +75,3 @@ class JSONHandler(RequestHandler):
                 access_log.info(stack_trace)
         self.write(self.encode({ 'error': kargs.get('reason') }))
         self.finish()
-
-    # XXX: the following two functions correspond to MongoDB only
-    def format(self, item):
-        item['_id'] = str(item['_id'])
-        return item
-
-    def send_result(self, data=None, status=None):
-        if data:
-            self.send_json(status or 200, map(self.format, data))
-        else:
-            self.send_error(status or 204, reason='resource not found')
