@@ -6,4 +6,5 @@ install:
   - source .venv-activate
 script:
   - coverage run --source "${MODULE}" --module "tornado.testing" "test"
+  - codecov --required
   - codecov --token "${CODECOV}"
