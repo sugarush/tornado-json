@@ -7,6 +7,5 @@ install:
   - pip install -r .requirements
   - source .venv-activate
 script:
-  - coverage run --source "${MODULE}" --module "tornado.testing" "test"
-  - coverage report
+  - venv-python-test
   - codecov --token "${CODECOV}"
