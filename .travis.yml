@@ -8,4 +8,5 @@ install:
   - source .venv-activate
 script:
   - venv-tornado-test
+after_success:
   - codecov --token "${CODECOV}" > /dev/null
