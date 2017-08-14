@@ -18,8 +18,13 @@ class TestHandler(JSONHandler):
 
     def put(self):
         data = self.request.body
-        print data
         self.send_json(200, data)
+
+    def post(self):
+        try:
+            raise Exception('Server error')
+        except Exception, error:
+            self.send_error(500, reason=error.message)
 
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):
@@ -192,9 +197,18 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
 
         self.assertEqual(data, JSONHandler.decode(response.body))
 
-    @skip('untested')
     def test_write_error(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/write_error', TestHandler),
+        ])
+
+        response = self.fetch('/write_error',
+            method='POST',
+            body='empty'
+        )
+
+        error = '{"error":"Server error"}'
+        self.assertEqual(response.body, error)
 
     @skip('untested')
     def test_write_error_with_stack_stack_trace(self):
