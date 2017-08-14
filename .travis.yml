@@ -2,9 +2,11 @@ language: python
 python:
   - 2.7
 install:
+  - git clone https://github.com/luciferavada/zshell-python-venv.git
+  - source zshell-python-venv/python.sh
   - pip install -r .requirements
   - source .venv-activate
 script:
   - coverage run --source "${MODULE}" --module "tornado.testing" "test"
-  - codecov --required
+  - coverage report
   - codecov --token "${CODECOV}"
