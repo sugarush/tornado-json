@@ -1,3 +1,8 @@
+codecov:
+
+  notify:
+    after_n_build: 0
+
 coverage:
 
   notify:
