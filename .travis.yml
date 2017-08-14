@@ -4,8 +4,8 @@ python:
 install:
   - git clone https://github.com/luciferavada/zshell-python-venv.git
   - source zshell-python-venv/python.sh
-  - venv-init
-  - venv-install
+  - pip install -r .requirements
+  - source .venv-activate
 script:
   - venv-tornado-test
   - codecov --token "${CODECOV}"
