@@ -60,9 +60,31 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
         provider = response.headers.get('Provider')
         self.assertEqual(provider, 'handler')
 
-    @skip('untested')
     def test_initialize_version(self):
-        pass
+        self._app.add_handlers(r'.*', [
+            (r'/version_default', TestHandler),
+            (r'/version_handler', TestHandler, {'version': 'handler'}),
+        ])
+
+        response = self.fetch('/version_default',
+            method='GET'
+        )
+        version = response.headers.get('Version')
+        self.assertEqual(version, JSONHandler.default_version)
+
+        self._app.settings.update({'version': 'application'})
+
+        response = self.fetch('/version_default',
+            method='GET'
+        )
+        version = response.headers.get('Version')
+        self.assertEqual(version, 'application')
+
+        response = self.fetch('/version_handler',
+            method='GET'
+        )
+        version = response.headers.get('Version')
+        self.assertEqual(version, 'handler')
 
     @skip('untested')
     def test_initialize_origin(self):
