@@ -10,3 +10,7 @@ script:
   - venv-tornado-test
 after_success:
   - codecov --token "${CODECOV}" > /dev/null
+notifications:
+  slack:
+    rooms:
+      - sugarush:ZmgII1nbdMZf6FEhq7PgiuAG#general
