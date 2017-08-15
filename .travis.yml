@@ -13,7 +13,7 @@ script:
   - venv-tornado-test
 
 after_success:
-  - codecov --token "${CODECOV}" > /dev/null
+  - codecov --token "ca6c0628-fb76-46a2-a139-5b0ab0361411" > /dev/null
 
 notifications:
 
