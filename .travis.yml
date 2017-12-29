@@ -23,7 +23,7 @@ notifications:
       - sugarush:ZmgII1nbdMZf6FEhq7PgiuAG#travis-ci
 
     template:
-      - "%{repository_name}@%{branch} commit <%{compare_url}|%{commit}> build <%{build_url}|%{result}> after %{elapsed_time}"
+      - "%{repository_name}@%{branch} commit <%{compare_url}|%{commit}> build <%{build_url}|%{result}>"
       - "%{author}: %{commit_message}"
 
     on_pull_requests: false
