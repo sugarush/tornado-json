@@ -4,8 +4,8 @@ python:
   - 3.6
 
 install:
-  - git clone https://github.com/luciferavada/zshell-python-venv.git
-  - source zshell-python-venv/python.sh
+  - git clone https://github.com/satan-extra/python.git
+  - source python/python.sh
   - pip install -r .requirements
   - source .venv-activate
 
@@ -23,7 +23,7 @@ notifications:
       - sugarush:ZmgII1nbdMZf6FEhq7PgiuAG#travis-ci
 
     template:
-      - "Commit (<%{compare_url}|%{commit}>) to %{repository}@%{branch} <%{build_url}|build> %{result}"
+      - "%{repository}@%{branch} commit <%{compare_url}|%{commit}>  <%{build_url}|build> %{result}"
       - "%{author}: %{commit_message}"
 
     on_pull_requests: false
