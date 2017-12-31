@@ -17,6 +17,8 @@ after_success:
 
 notifications:
 
+  email: false
+
   slack:
 
     rooms:
