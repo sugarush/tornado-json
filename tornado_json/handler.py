@@ -51,7 +51,7 @@ class JSONHandler(RequestHandler):
         try:
             self.body = self.decode(self.request.body or '{ }')
         except Exception as error:
-            self.send_error(400, reason=str(error))
+            self.send_error(400, reason='json decode error: %s' % str(error))
 
     def content_type(self):
         return 'application/{provider}.api+json; version={version}'.format(
