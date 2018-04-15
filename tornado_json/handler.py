@@ -71,6 +71,7 @@ class JSONHandler(RequestHandler):
     # called by `send_error` in RequestHandler
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
+        # headers are reset by a call to self.clear() in send_error
         self.set_headers()
         if 'exc_info' in kargs:
             stack_trace = traceback.format_exception(*kargs['exc_info'])
