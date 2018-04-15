@@ -65,6 +65,13 @@ class JSONHandler(RequestHandler):
         self.finish()
 
     # called by `send_error` in RequestHandler
+    def clear(self):
+        # don't reset the headers
+        self._write_buffer = []
+        self._status_code = 200
+        self._reason = httputil.responses[200]
+
+    # called by `send_error` in RequestHandler
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
         if 'exc_info' in kargs:
