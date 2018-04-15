@@ -8,4 +8,4 @@ def log(handler):
     else:
         log_method = access_log.error
     request_time = 1000.0 * handler.request.request_time()
-    log_method("%s %s %s %d %s %.2fms", handler.uuid, handler.request.method, handler.request.uri, handler.get_status(), handler._reason, request_time)
+    log_method("%s %s %s %d %s %.2fms", handler.uuid, handler.request.uri, handler.request.method, handler.get_status(), handler._reason, request_time)
