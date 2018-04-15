@@ -2,6 +2,8 @@ import json, re, traceback
 
 from uuid import uuid4
 
+import tornado, time
+from tornado import httputil
 from tornado.web import RequestHandler
 from tornado.escape import to_basestring
 from tornado.log import access_log
@@ -37,17 +39,7 @@ class JSONHandler(RequestHandler):
         self.uuid = None
 
     def prepare(self):
-        uuid = self.request.headers.get('Request-Id')
-        if not uuid or not self.valid_uuid.match(uuid):
-            uuid = str(uuid4())
-            self.request.headers['Request-Id'] = uuid
-        self.set_header('Access-Control-Allow-Origin', self.origin)
-        self.set_header('Content-Type', self.content_type())
-        self.set_header('Provider', self.provider)
-        self.set_header('Version', self.version)
-        self.set_header('Origin', self.origin)
-        self.set_header('Request-Id', uuid)
-        self.uuid = uuid
+        self.set_headers()
         try:
             self.body = self.decode(self.request.body or '{ }')
         except Exception as error:
@@ -59,21 +51,28 @@ class JSONHandler(RequestHandler):
             version=self.version
         )
 
+    def set_headers(self):
+        uuid = self.request.headers.get('Request-Id')
+        if not uuid or not self.valid_uuid.match(uuid):
+            uuid = str(uuid4())
+            self.request.headers['Request-Id'] = uuid
+        self.set_header('Access-Control-Allow-Origin', self.origin)
+        self.set_header('Content-Type', self.content_type())
+        self.set_header('Provider', self.provider)
+        self.set_header('Version', self.version)
+        self.set_header('Origin', self.origin)
+        self.set_header('Request-Id', uuid)
+        self.uuid = uuid
+
     def send_json(self, status, data):
         self.set_status(status)
         self.write(self.encode(data))
         self.finish()
 
     # called by `send_error` in RequestHandler
-    def clear(self):
-        # don't reset the headers
-        self._write_buffer = []
-        self._status_code = 200
-        self._reason = httputil.responses[200]
-
-    # called by `send_error` in RequestHandler
     def write_error(self, status, **kargs):
         # set_status has already been called in send_error
+        self.set_headers()
         if 'exc_info' in kargs:
             stack_trace = traceback.format_exception(*kargs['exc_info'])
             stack_trace = str.join('', stack_trace).rstrip('\n')
