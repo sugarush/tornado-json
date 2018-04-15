@@ -1,9 +1,8 @@
 import json, re, traceback
 
 from uuid import uuid4
+from json import JSONDecodeError
 
-import tornado, time
-from tornado import httputil
 from tornado.web import RequestHandler
 from tornado.escape import to_basestring
 from tornado.log import access_log
@@ -42,8 +41,8 @@ class JSONHandler(RequestHandler):
         self.set_headers()
         try:
             self.body = self.decode(self.request.body or '{ }')
-        except Exception as error:
-            self.send_error(400, reason='json decode error: %s' % str(error))
+        except JSONDecodeError as error:
+            self.send_error(400, reason='JSON Decode Error: %s' % str(error))
 
     def content_type(self):
         return 'application/{provider}.api+json; version={version}'.format(
