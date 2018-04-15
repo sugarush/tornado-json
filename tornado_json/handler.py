@@ -39,6 +39,7 @@ class JSONHandler(RequestHandler):
         self.uuid = None
 
     def prepare(self):
+        self.set_headers()
         try:
             self.body = self.decode(self.request.body or '{ }')
         except Exception as error:
@@ -65,7 +66,6 @@ class JSONHandler(RequestHandler):
 
     def send_json(self, status, data):
         self.set_status(status)
-        self.set_headers()
         self.write(self.encode(data))
         self.finish()
 
