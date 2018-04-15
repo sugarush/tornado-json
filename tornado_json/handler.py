@@ -23,14 +23,14 @@ class JSONHandler(RequestHandler):
     def decode(cls, data):
         return json.loads(to_basestring(data))
 
-    def initialize(self, provider=None, version=None, origin=None):
-        self.provider = provider or self.settings.get(
+    def initialize(self, **kargs):
+        self.provider = kargs.get('provider') or self.settings.get(
             'provider', self.default_provider
         )
-        self.version = version or self.settings.get(
+        self.version = kargs.get('version') or self.settings.get(
             'version', self.default_version
         )
-        self.origin = origin or self.settings.get(
+        self.origin = kargs.get('origin') or self.settings.get(
             'origin', self.default_origin
         )
         self.valid_uuid = re.compile(self.UUID_REGEX)
