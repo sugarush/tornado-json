@@ -47,6 +47,7 @@ class JSONHandler(RequestHandler):
         self.set_header('Version', self.version)
         self.set_header('Origin', self.origin)
         self.set_header('Request-Id', uuid)
+        self.body = self.decode(self.request.body or '{ }')
         self.uuid = uuid
 
     def content_type(self):
