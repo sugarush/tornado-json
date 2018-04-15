@@ -47,8 +47,11 @@ class JSONHandler(RequestHandler):
         self.set_header('Version', self.version)
         self.set_header('Origin', self.origin)
         self.set_header('Request-Id', uuid)
-        self.body = self.decode(self.request.body or '{ }')
         self.uuid = uuid
+        try:
+            self.body = self.decode(self.request.body or '{ }')
+        except Exception as error:
+            self.send_error(400, reason=str(error))
 
     def content_type(self):
         return 'application/{provider}.api+json; version={version}'.format(
