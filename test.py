@@ -218,7 +218,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
             method='DELETE',
         )
 
-        error = '{"error":"Server error"}'
+        error = '{"message":"Server error"}'
         self.assertEqual(response.body.decode('utf-8'), error)
 
     def test_write_error_with_stack_stack_trace(self):
