@@ -83,5 +83,5 @@ class JSONHandler(RequestHandler):
                 access_log.warning(stack_trace)
             elif status >= 200:
                 access_log.info(stack_trace)
-        self.write(self.encode({ 'error': kargs.get('reason') }))
+        self.write(self.encode({ 'message': kargs.get('reason') }))
         self.finish()
