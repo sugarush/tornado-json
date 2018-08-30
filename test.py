@@ -20,15 +20,15 @@ class TestHandler(JSONHandler):
 
     def put(self):
         data = self.request.body.decode('utf-8')
-        self.send_json(200, data)
+        self.json(200, data)
 
     def post(self):
         try:
             raise Exception('Server error')
         except Exception as error:
             data = JSONHandler.decode(self.request.body)
-            self.send_error(data['status'],
-                reason=str(error),
+            self.error(data['status'],
+                { 'message': str(error) },
                 exc_info=sys.exc_info(),
             )
 
@@ -36,7 +36,7 @@ class TestHandler(JSONHandler):
         try:
             raise Exception('Server error')
         except Exception as error:
-            self.send_error(500, reason=str(error))
+            self.error(500, { 'message': str(error) })
 
 
 class TestJSONHandler(testing.AsyncHTTPTestCase):

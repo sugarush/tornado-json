@@ -63,18 +63,20 @@ class JSONHandler(RequestHandler):
         self.set_header('Request-Id', uuid)
         self.uuid = uuid
 
+    def write_json(self, data):
+        self.write(self.encode(data))
+
     def send_json(self, status, data):
         self.set_status(status)
-        self.write(self.encode(data))
+        self.write_json(data)
         self.finish()
 
     # called by `send_error` in RequestHandler
     def write_error(self, status, **kargs):
-        # set_status has already been called in send_error
-        # headers are reset by a call to self.clear() in send_error
         self.set_headers()
-        if 'exc_info' in kargs:
-            stack_trace = traceback.format_exception(*kargs['exc_info'])
+        exc_info = kargs.pop('exc_info', None)
+        if exc_info:
+            stack_trace = traceback.format_exception(*exc_info)
             stack_trace = str.join('', stack_trace).rstrip('\n')
             stack_trace = ('%s\n%s' % (self.uuid, stack_trace))
             if status >= 500:
@@ -83,5 +85,14 @@ class JSONHandler(RequestHandler):
                 access_log.warning(stack_trace)
             elif status >= 200:
                 access_log.info(stack_trace)
-        self.write(self.encode({ 'message': kargs.get('reason') }))
+        data = kargs.pop('data', None)
+        if data:
+            self.write_json(data)
         self.finish()
+
+    def json(self, status, data):
+        self.send_json(status, data)
+
+    def error(self, status, data, **kargs):
+        kargs['data'] = data
+        self.send_error(status, **kargs)
