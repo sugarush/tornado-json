@@ -1,0 +1,11 @@
+backports-abc==0.5
+certifi==2017.7.27.1
+chardet==3.0.4
+codecov==2.0.9
+coverage==4.4.1
+idna==2.5
+requests==2.18.3
+singledispatch==3.4.0.3
+six==1.10.0
+tornado==4.5.3
+urllib3==1.22

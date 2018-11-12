@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from tornado import testing, web, gen
 
-from tornado_json import JSONHandler
+from tornado_json import JSONHandler, log
 
 
 class TestHandler(JSONHandler):
@@ -48,7 +48,7 @@ class TestJSONHandler(testing.AsyncHTTPTestCase):
 
     # must be implemented to run tests
     def get_app(self):
-        return web.Application()
+        return web.Application(None, **{ 'log_function': log })
 
     def test_encode(self):
         data = JSONHandler.encode(self.json_to_encode)
